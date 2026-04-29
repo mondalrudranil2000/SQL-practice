@@ -1,0 +1,117 @@
+#ifndef LIST_H
+#define LIST_H
+#include <stdio.h>
+#include <unordered_map>
+#include <initializer_list>
+using namespace std;
+template <typename F>
+class list{
+	private:
+	F *data;
+	int length;
+	public:
+	list():data(nullptr),length(0){}
+	void clear(){
+		if(data) delete[] data;
+		data = nullptr;
+		length = 0;
+	}
+	~list(){clear(); length = NULL;}
+	list(initializer_list<F> arr){
+		data = new F[arr.size()];
+		int i=0;
+		for(F val : arr){
+			data[i]=val;i++;}
+		length=i;
+	}
+	list(F *arr,int size){
+		data = new F[size];
+		for(int i=0;i<size;i++){
+			data[i]=arr[i];
+		}
+	length = size;
+	}
+	// copy constructor
+	list(const list<F>& other) {
+	    length = other.length;
+	    data = new F[length];
+	    for(int i = 0; i < length; i++) {
+	        data[i] = other.data[i];
+	    }
+	}
+	void operator =(const list<F>& other){
+		if(*this == other)return;
+		delete[] data;
+		data = new F[other.len()];
+		for(int i=0;i<other.len();i++){
+			data[i] = other[i];
+		}
+		length = other.len();
+	}
+	void operator =(initializer_list<F> arr){
+		if(data) delete[] data;
+		length = arr.size();
+		data = new F[length];
+		int i=0;
+		for(F val : arr){
+			data[i] = val;
+			i++;
+		}
+	}
+	F& operator [](int index){
+		return data[index];
+	}
+	const F& operator [](int index) const{
+		return data[index];
+	}
+	bool operator==(const list<F>& arr){
+		if (length!=arr.len()) return false;
+		for(int i=0;i<length;i++){
+			if (data[i]!=arr[i])return false;}
+		return true;
+	}
+	F* begin(){return data;}
+	const F* begin() const {return data;}
+	F* end(){return data+length;}
+	const F* end() const {return data+length;}
+	void push_back(F value){
+		F *newdata = new F[length+1];
+		if(data!=nullptr){
+			for(int i=0;i<length;i++){
+				newdata[i]=data[i];
+			}
+			delete[] data;
+		}
+		newdata[length]=value;
+		data = newdata;
+		length++;
+	}
+	void append(F value){
+		push_back(value);
+	}
+	void pop(int index){
+		for(int i=index;i<length-1;i++){
+			data[i]=data[i+1];
+		}
+		length -=1;
+	}
+	int len() const{return length;}
+	int size() const{return length;}
+	
+	list(list<F>&& other) noexcept : data(other.data), length(other.length) {
+	    other.data = nullptr;
+	    other.length = 0;
+	}
+	
+	list& operator=(list<F>&& other) noexcept {
+	    if (this != &other) {
+	        delete[] data;
+	        data = other.data;
+	        length = other.length;
+	        other.data = nullptr;
+	        other.length = 0;
+	    }
+	    return *this;
+	}
+};
+#endif
